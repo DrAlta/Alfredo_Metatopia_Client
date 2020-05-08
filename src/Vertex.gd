@@ -13,6 +13,9 @@ func sqr(x):
 func dist2(a :Vector2,  b : Vector2):
 	return sqr(a.x - b.x) + sqr(a.y - b.y)
 	
+
+#squared distance from pont p to the line segment 
+
 func dist2LineSeg(p : Vector2, a : Vector2, b : Vector2):
 	var l2 =dist2(a, b)
 	if (l2 == 0 ):
@@ -24,6 +27,27 @@ func dist2LineSeg(p : Vector2, a : Vector2, b : Vector2):
 			a.y + t * (b.y - a.y) \
 		)
 	)
+	
+func vecToSeg(t: float, p: Vector2, a:Vector2, b:Vector2):
+	return Vector2((1 - t) * a.x + t * b.x - p.x, (1 - t) * a.y + t * b.y - p.y)
+
+func sqrDiag(p : Vector2):
+	return sqr(p.x) + sqr(p.y)
+
+func nearestLineSeg(p : Vector2, a : Vector2, b : Vector2):
+	var v = Vector2(b.x - a.x, b.y - a.y)
+	var u = Vector2(a.x - p.x, a.y - p.y)
+	var vu = v.x * u.x + v.y * u.y
+	var vv = sqr(v.x) + sqr(v.y)
+	var t = -vu / vv
+	
+	if (t <= 0):
+		return a
+	elif (t >= 1):
+		return b
+	else:
+		return vecToSeg(t, Vector2(0,0), a, b)
+
 func updatevetex(a):
 	print ("a" + str(a))
 
@@ -39,6 +63,12 @@ func _draw():
 			draw_line(midway, midway + \
 			(Vector2(linedef.start.pos.y - linedef.end.pos.y, \
 			- (linedef.start.pos.x - linedef.end.pos.x)).normalized()*40), Color(1, 1, 1), 1, true)
+			#draw nearist point
+			var nearP = nearestLineSeg(mpos, linedef.start.pos, linedef.end.pos)
+			draw_circle(nearP, 3, Color(1,1,1))
+			draw_circle(nearP, 2, Color(0,0,1))
+
+
 		else:
 			draw_line(linedef.start.pos, linedef.end.pos, Color(1, 1, 1), 1, true)
 			draw_line(midway, midway + \
