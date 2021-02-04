@@ -24,14 +24,14 @@ var map = {
 	"walls" : [
 		
 	],#end walls
+	"entities" : [
+		
+	], #end entities
 	"portals": [
 		{}
 		
 	]#end portals
 }#end map
-
-var sec2_points = PoolVector2Array( [Vector2(0,100),Vector2(0,150), Vector2(100,150), Vector2(100,100)] )
-var sec2_tex = preload("res://Ground037_1K_Color.jpg")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -74,7 +74,12 @@ func draw_map(mapID, map_tran: Transform2D, view_frustum: PoolVector2Array, addi
 			(Vector2(wall.start.pos.y - wall.end.pos.y, \
 			- (wall.start.pos.x - wall.end.pos.x)).normalized()*40), Color(1, 1, 1), 1, true)
 
-	#drawentity sprites
+	#draw entity sprites
+	for entity in mapID.entities:
+		draw_entity(entity)
+	#draw inner glow of portal
+	for inner_glow in additional_lines:
+		draw_line(inner_glow[0],inner_glow[1], portal_colors[rec_lvl% (portal_colors.size+1)], 3.0, true)
 	
 	##### process portals ####
 	for portal in mapID.portals:
@@ -99,16 +104,14 @@ func draw_map(mapID, map_tran: Transform2D, view_frustum: PoolVector2Array, addi
 			var basis_x = map_tran.x * child.x.x + map_tran.y * portal.transform.x.y
 			var basis_y = map_tran.x * portal.transform.y.x + map_tran.y * portal.transform.y.y
 
-# Change the node's transform to what we just calculated.
-transform = Transform2D(basis_x, basis_y, origin)
-		#queue the portal for rendinging.
-		portal_queue.append({
-			"mapID" : portal.mapID,
-			"lvl" : rec_lvl + 1,
-			"line_a" : [portal.a, portal_a_end], 
-			"line_b" : [portal.a, portal_b_end],
-			"frustum" : Geometry.merge_polygons_2d(view_frustum, PoolVector2Array( []))
-			"tran" : Transform2D(basis_x, basis_y, origin)
+			#queue the portal for rendinging.
+			portal_queue.append({
+				"mapID" : portal.mapID,
+				"lvl" : rec_lvl + 1,
+				"line_a" : [portal.a, portal_a_end], 
+				"line_b" : [portal.a, portal_b_end],
+				"frustum" : Geometry.merge_polygons_2d(view_frustum, PoolVector2Array( []))
+				"tran" : Transform2D(basis_x, basis_y, origin)
 
 	#draw portal
 	#??? draw the map on the other side of the portal but clipping it to the 
