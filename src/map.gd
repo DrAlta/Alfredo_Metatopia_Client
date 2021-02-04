@@ -63,6 +63,7 @@ func draw_sector(map_tran: Transform2D, sec_points: PoolVector2Array, tex, tex_m
 ########
 # transform the map(mapID) by the transformation matrix(map_tran) and only drawing it in side the poligon (view_frustum)
 func draw_map(mapID, map_tran: Transform2D, view_frustum: PoolVector2Array, additional_lines: Array, rec_lvl):
+##############################How to mask these draws to the view_frustum? 
 	#draw the floors of the sectors
 	for sec in mapID.sectors:		
 		draw_sector(map_tran, sec.poly, sec.tex, sec.tex_transform)
